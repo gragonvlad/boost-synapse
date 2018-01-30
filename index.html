@@ -522,7 +522,7 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel1">
 <li><a href="#_abstract">Abstract</a></li>
 <li><a href="#_distribution">Distribution</a></li>
-<li><a href="#_building">Building</a></li>
+<li><a href="#_feedback_support">Feedback / support</a></li>
 <li><a href="#_portability">Portability</a></li>
 <li><a href="#_tutorial">Tutorial</a>
 <ul class="sectlevel2">
@@ -579,6 +579,10 @@ table.CodeRay td.code>pre{padding:0}
 </ul>
 </li>
 <li><a href="#_use_case_synapsifying_glfw">Use case: synapsifying GLFW</a></li>
+<li><a href="#_alternatives_to_synapse">Alternatives to Synapse</a></li>
+<li><a href="#_macros_and_configuration">Macros and configuration</a></li>
+<li><a href="#_building_and_installation">Building and installation</a></li>
+<li><a href="#_building_the_unit_tests_and_the_examples">Building the unit tests and the examples</a></li>
 <li><a href="#_q_a">Q&amp;A</a></li>
 <li><a href="#_acknowledgements">Acknowledgements</a></li>
 </ul>
@@ -608,19 +612,25 @@ table.CodeRay td.code>pre{padding:0}
 <div class="paragraph">
 <p>The source code is available in <a href="https://github.com/zajo/boost-synapse">this GitHub repository</a>.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Synapse is not part of Boost.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_building">Building</h2>
+<h2 id="_feedback_support">Feedback / support</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Synapse has been formatted to be submitted for a Boost review, so its directory structure follows the common directory structure for Boost libraries—and it&#8217;s built with Boost Build.</p>
-</div>
-<div class="paragraph">
-<p>Alternatively, just put <code>connect.cpp</code> and either <code>thread_local_queue.cpp</code> or <code>interthread_stub.cpp</code> into your favorite build system, depending on whether or not your program calls <code>create_thread_local_queue</code>. If your program calls the <code>block</code> function, you also need to compile and link <code>block.cpp</code>.</p>
-</div>
-<div class="paragraph">
-<p>However, note that if your program only emits signals (that is, it calls emit but it never creates any connections), there is no need to link any <code>.cpp</code> files; that is, <code>boost/synapse/emit.hpp</code> by itself is an independent header-only library. This way low level libraries that emit signals do not require the user to link Synapse, unless he cares to connect them.</p>
+<p>Please use the <a href="https://lists.boost.org/mailman/listinfo.cgi/boost">Boost Developers mailing list</a>.</p>
 </div>
 </div>
 </div>
@@ -2690,6 +2700,206 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 </div>
 </div>
 <div class="sect1">
+<h2 id="_alternatives_to_synapse">Alternatives to Synapse</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See this <a href="https://en.wikipedia.org/wiki/Signals_and_slots#Alternative_implementations">Wikipedia page</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_macros_and_configuration">Macros and configuration</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_SYNAPSE_ASSERT</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All assertions in Synapse use this macro; if not <code>#defined</code>, Synapse header files <code>#define</code> it as <a href="http://www.boost.org/doc/libs/release/libs/assert/assert.html"><code>BOOST_ASSERT</code></a>.</p>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_SYNAPSE_USE_STD_FUNCTION</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By default, Synapse uses <code>boost::function</code>. If this macro is <code>#defined</code>, it will use <code>std::function</code> instead.</p>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_SYNAPSE_USE_STD_SMART_PTR</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By default, Synapse uses the following Boost smart pointer components:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>boost::shared_ptr</code></p>
+</li>
+<li>
+<p><code>boost::weak_ptr</code></p>
+</li>
+<li>
+<p><code>boost::make_shared</code></p>
+</li>
+<li>
+<p><code>boost::get_deleter</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If <code>BOOST_SYNAPSE_USE_STD_SMART_PTR</code> is <code>#defined</code>, the corresponding standard components will be used.</p>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_SYNAPSE_NO_THREADS</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>#defined</code>, Synapse assumes that static storage is equivalent to thread-local storage, and interthread communication support is disabled.</p>
+</div>
+<div class="paragraph">
+<p>If <code>BOOST_SYNAPSE_NO_THREADS</code> is not explicitly <code>#defined</code>, thread-safety depends on <code>BOOST_NO_THREADS</code>.</p>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_SYNAPSE_THREAD_LOCAL(type,object)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This macro is used to define objects with static thread-local storage; if not <code>#defined</code>, Synapse header files <code>#define</code> it as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_THREAD_LOCAL(type,object) <span class="directive">static</span> thread_local type object</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or, under <code>BOOST_SYNAPSE_NO_THREADS</code>, as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_THREAD_LOCAL(type,object) <span class="directive">static</span> type object</code></pre>
+</div>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_SYNAPSE_THREAD_LOCAL_INIT(type,object,init)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This macro is used to define objects with static thread-local storage and provide their initialization; if not <code>#defined</code>, Synapse header files <code>#define</code> it as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_THREAD_LOCAL_INIT(type,object,init) <span class="directive">static</span> thread_local type object init</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or, under <code>BOOST_SYNAPSE_NO_THREADS</code>, as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_THREAD_LOCAL(type,object,init) <span class="directive">static</span> type object init</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>init</code> argument passed will contain parentheses, so when the macro is expanded it results in calling a constructor.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_SYNAPSE_STATIC(type,object)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This macro is used to define objects with static thread-local storage; if not <code>#defined</code>, Synapse header files <code>#define</code> it as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_STATIC(type,object) <span class="directive">static</span> type object</code></pre>
+</div>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre>BOOST_SYNAPSE_STATIC_INIT(type,object,init)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This macro is used to define objects with static thread-local storage and provide their initialization; if not <code>#defined</code>, Synapse header files <code>#define</code> it as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_STATIC_INIT(type,object,init) <span class="directive">static</span> type object init</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Except under <code>BOOST_SYNAPSE_NO_THREADS</code>, objects with static storage are expected to be thread-safe.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>init</code> argument passed will contain parentheses, so when the macro is expanded it results in calling a constructor.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_building_and_installation">Building and installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Synapse has been formatted to be submitted for a Boost review, so its directory structure follows the common directory structure for Boost libraries—and it&#8217;s built with Boost Build.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, just put <code>connect.cpp</code> and either <code>thread_local_queue.cpp</code> or <code>interthread_stub.cpp</code> into your favorite build system, depending on whether or not your program calls <code>create_thread_local_queue</code>. If your program calls the <code>block</code> function, you also need to compile and link <code>block.cpp</code>.</p>
+</div>
+<div class="paragraph">
+<p>However, note that if your program only emits signals (that is, it calls emit but it never creates any connections), there is no need to link any <code>.cpp</code> files; that is, <code>boost/synapse/emit.hpp</code> by itself is an independent header-only library. This way low level libraries that emit signals do not require the user to link Synapse, unless he cares to connect them.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_building_the_unit_tests_and_the_examples">Building the unit tests and the examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The unit tests and the examples can be built within the Boost framework: clone Synapse under the <code>libs</code> subdirectory in your boost installation, then <code>cd</code> into <code>synapse/build/test</code> and execute <code>b2</code> as usual.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_q_a">Q&amp;A</h2>
 <div class="sectionbody">
 <div class="qlist qanda">
@@ -2723,6 +2933,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 <div class="sectionbody">
 <div class="paragraph">
 <p>Special thanks to Peter Dimov for his valuable feedback on the Synapse design and for coming up with the perfect name for this library.</p>
+</div>
+<hr>
+<div class="paragraph">
+<p><span class="small"><em>&#169; 2015-2018 Emil Dotchevski</em></span></p>
 </div>
 </div>
 </div>
