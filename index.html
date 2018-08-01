@@ -779,10 +779,10 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 <div class="ulist">
 <ul>
 <li>
-<p><code>shared_ptr&lt;<a href="#connection">connection</a>&gt;</code> objects are returned by overloads of <a href="#connect"><code>connect</code></a> which take the emitter (and, if specified, the receiver) as a raw pointer. The user is required to keep the <code>connection</code> object afloat; the signal is disconnected when it expires.</p>
+<p><code>shared_ptr&lt;<a href="#connection">connection</a>&gt;</code> objects are returned by overloads of <a href="#connect"><code>connect</code></a> which take the emitter (and, if specified, the receiver) as a raw pointer. The user is required to keep the <code>connection</code> object alive; the signal is disconnected when that object expires.</p>
 </li>
 <li>
-<p><code>weak_ptr&lt;<a href="#pconnection">pconnection</a>&gt;</code> objects are returned by overloads of <a href="#connect"><code>connect</code></a> which take at least one of the emitter or the receiver as a <code>weak_ptr</code> or <code>shared_ptr</code>. The user is <em>not</em> required to keep <code>pconnection</code> objects afloat; the connection is disconnected when Synapse detects that the emitter or the receiver have expired.</p>
+<p><code>weak_ptr&lt;<a href="#pconnection">pconnection</a>&gt;</code> objects are returned by overloads of <a href="#connect"><code>connect</code></a> which take at least one of the emitter or the receiver as a <code>weak_ptr</code> or <code>shared_ptr</code>. The user is <em>not</em> required to keep <code>pconnection</code> objects alive; the connection is disconnected when Synapse detects that the emitter or the receiver have expired.</p>
 </li>
 </ul>
 </div>
@@ -814,7 +814,7 @@ Earlier Synapse versions lacked support for <code>pconnection</code> objects, me
 <div class="sect2">
 <h3 id="_blocking_of_signals">Blocking of signals</h3>
 <div class="paragraph">
-<p>It is possible to temporarily block a specific signal for a specific emitter. This allows to dynamically disable functionality implemented by emitting signals&#8201;&#8212;&#8201;without having to disconnect them.</p>
+<p>It is possible to temporarily block a specific signal for a specific emitter. This allows users to dynamically disable functionality implemented by emitting signals&#8201;&#8212;&#8201;without having to disconnect them.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1291,7 +1291,7 @@ It is the responsibility of the caller to ensure that the emitter object <code>e
 </div>
 </div>
 <div class="paragraph">
-<p>Overloads of <code>connect</code> that return <code>shared_ptr&lt;<a href="#connection">connection</a>&gt;</code> create connections whose lifetime is explicitly managed by the user. Such connections require that the caller keeps the returned <a href="#connection"><code>connection</code></a> object afloat for as long as the connection should persist.</p>
+<p>Overloads of <code>connect</code> that return <code>shared_ptr&lt;<a href="#connection">connection</a>&gt;</code> create connections whose lifetime is explicitly managed by the user. Such connections require that the caller keeps the returned <a href="#connection"><code>connection</code></a> object alive for as long as the connection should persist.</p>
 </div>
 <div class="paragraph">
 <p>Overloads of <code>connect</code> that return <code>weak_ptr&lt;<a href="#pconnection">pconnection</a>&gt;</code> take at least one of <code>e</code> and <code>r</code> as a <code>weak_ptr</code> or <code>shared_ptr</code>. They create <em>persistent</em> connections which expire when either <code>e</code> or <code>r</code> expire.</p>
@@ -1456,7 +1456,7 @@ The passed <a href="#connection"><code>connection</code></a> object can be used 
 <dl>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p>The <code>translate</code> function template creates a connection which causes the emitter <code>e2</code> to emit <code>TranslatedSignal</code> each time the emitter <code>e1</code> emits <code>OriginalSignal</code> (the two signals must have campatible signatures). This behavior persists until:</p>
+<p>The <code>translate</code> function template creates a connection which causes the emitter <code>e2</code> to emit <code>TranslatedSignal</code> each time the emitter <code>e1</code> emits <code>OriginalSignal</code> (the two signals must have compatible signatures). This behavior persists until:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1579,7 +1579,7 @@ Use <a href="#release"><code>release</code></a> to convert a non-owning <code>we
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
-<span class="directive">void</span> set_user_data( shared_ptr&lt;T&gt; <span class="directive">const</span> &amp; data );</code></pre>
+<span class="directive">void</span> set_user_data( T <span class="directive">const</span> &amp; data );</code></pre>
 </div>
 </div>
 <div class="dlist">
@@ -1651,7 +1651,7 @@ shared_ptr&lt;T&gt; emitter() <span class="directive">const</span>;</code></pre>
 </div>
 </li>
 <li>
-<p>If the emitter was passed to <a href="#connect"><code>connect</code></a> (or <a href="#tranlate"><code>translate</code></a>) as a raw pointer, the returned <code>shared_ptr</code> points that emitter but does not (can not) keep it afloat.</p>
+<p>If the emitter was passed to <a href="#connect"><code>connect</code></a> (or <a href="#tranlate"><code>translate</code></a>) as a raw pointer, the returned <code>shared_ptr</code> points that emitter but does not (can not) keep it alive.</p>
 </li>
 </ul>
 </div>
@@ -1695,7 +1695,7 @@ shared_ptr&lt;T&gt; receiver() <span class="directive">const</span>;</code></pre
 </div>
 </li>
 <li>
-<p>If the receiver was passed to <a href="#connect"><code>connect</code></a> (or <a href="#tranlate"><code>translate</code></a>) as a raw pointer, the returned <code>shared_ptr</code> points that receiver but does not (can not) keep it afloat.</p>
+<p>If the receiver was passed to <a href="#connect"><code>connect</code></a> (or <a href="#tranlate"><code>translate</code></a>) as a raw pointer, the returned <code>shared_ptr</code> points that receiver but does not (can not) keep it alive.</p>
 </li>
 </ul>
 </div>
@@ -1853,7 +1853,7 @@ shared_ptr&lt;T&gt; emitter() <span class="directive">const</span>;</code></pre>
 </div>
 </li>
 <li>
-<p>If the emitter was passed to <a href="#block"><code>block</code></a> as a raw pointer, the returned <code>shared_ptr</code> points that emitter but does not (can not) keep it afloat.</p>
+<p>If the emitter was passed to <a href="#block"><code>block</code></a> as a raw pointer, the returned <code>shared_ptr</code> points that emitter but does not (can not) keep it alive.</p>
 </li>
 </ul>
 </div>
@@ -1958,7 +1958,7 @@ While any number of threads can use this function to create their own <a href="#
 </dd>
 <dt class="hdlist1">Returns: </dt>
 <dd>
-<p>The total number of signals emitted (always greater than 1).</p>
+<p>The total number of signals emitted (always greater than 0).</p>
 </dd>
 </dl>
 </div>
@@ -2143,7 +2143,7 @@ While <a href="#poll"><code>poll</code></a> (or <a href="#wait"><code>wait</code
 <pre class="CodeRay highlight"><code data-lang="c++">shared_ptr&lt;SSL&gt; ssl(SSL_new(ctx),&amp;SSL_free);
 
 connect&lt;SSL_info_callback&gt;( ssl,
-    [ ]( <span class="directive">const</span> SSL *ssl, <span class="predefined-type">int</span> type, <span class="predefined-type">int</span> val ) noexcept {
+    [ ]( <span class="directive">const</span> SSL *ssl, <span class="predefined-type">int</span> type, <span class="predefined-type">int</span> val ) <span class="directive">noexcept</span> {
 
     } );</code></pre>
 </div>
@@ -2170,7 +2170,7 @@ connect&lt;SSL_info_callback&gt;( ssl,
 <pre class="CodeRay highlight"><code data-lang="c++">shared_ptr&lt;SSL&gt; ssl(SSL_new(ctx),&amp;SSL_free);
 
 connect&lt;SSL_info_callback&gt;( ssl,
-    [ ]( <span class="directive">const</span> SSL *ssl, <span class="predefined-type">int</span> type, <span class="predefined-type">int</span> val ) noexcept {
+    [ ]( <span class="directive">const</span> SSL *ssl, <span class="predefined-type">int</span> type, <span class="predefined-type">int</span> val ) <span class="directive">noexcept</span> {
         <span class="keyword">try</span> {
 
             <span class="comment">//code which may throw</span>
@@ -2281,7 +2281,7 @@ Window::Window(QWidget *parent) :
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Needed to keep the Synapse connection afloat.</td>
+<td>Needed to keep the Synapse connection alive.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -2775,7 +2775,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_THREAD_LOCAL(type,object) <span class="directive">static</span> thread_local type object</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_THREAD_LOCAL(type,object) <span class="directive">static</span> <span class="directive">thread_local</span> type object</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2797,7 +2797,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_THREAD_LOCAL_INIT(type,object,init) <span class="directive">static</span> thread_local type object init</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> BOOST_SYNAPSE_THREAD_LOCAL_INIT(type,object,init) <span class="directive">static</span> <span class="directive">thread_local</span> type object init</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2855,7 +2855,7 @@ The <code>init</code> argument passed will contain parentheses, so when the macr
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-Except under <code>BOOST_SYNAPSE_NO_THREADS</code>, objects with static storage are expected to be thread-safe.
+Except under <code>BOOST_SYNAPSE_NO_THREADS</code>, initialization of objects with static storage is expected to be serialized.
 </td>
 </tr>
 </table>
@@ -2884,7 +2884,7 @@ The <code>init</code> argument passed will contain parentheses, so when the macr
 <p>Alternatively, just put <code>connect.cpp</code> and either <code>thread_local_queue.cpp</code> or <code>interthread_stub.cpp</code> into your favorite build system, depending on whether or not your program calls <code>create_thread_local_queue</code>. If your program calls the <code>block</code> function, you also need to compile and link <code>block.cpp</code>.</p>
 </div>
 <div class="paragraph">
-<p>However, note that if your program only emits signals (that is, it calls emit but it never creates any connections), there is no need to link any <code>.cpp</code> files; that is, <code>boost/synapse/emit.hpp</code> by itself is an independent header-only library. This way low level libraries that emit signals do not require the user to link Synapse, unless he cares to connect them.</p>
+<p>However, note that if your program only emits signals (that is, it calls <code>emit</code> but it never creates any connections), there is no need to link any <code>.cpp</code> files; that is, <code>boost/synapse/emit.hpp</code> by itself is an independent header-only library. This way low level libraries that emit signals do not require the user to link Synapse, unless he cares to connect them.</p>
 </div>
 </div>
 </div>
