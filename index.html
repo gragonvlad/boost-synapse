@@ -667,13 +667,34 @@ Synapse is not part of Boost.
 <div class="sect2">
 <h3 id="_signals_emitters_receivers">Signals, emitters, receivers</h3>
 <div class="paragraph">
-<p>In Synapse, signals are defined by function pointer typedefs. The return type is ignored in function calls. Instead, it is used to tell apart different signals that have otherwise identical signature.</p>
+<p>Typically, signal programming libraries allow user-defined objects to define <em>signals</em> and to act as signal emitters. Like function types, each signal has a signature. Emitting a signal is similar to a function call, but instead of calling a particular function, it calls all functions that are currently connected to that particular signal from that particular emitter object. Naturally, the signature of any connected function must match the signature of the signal.</p>
 </div>
 <div class="paragraph">
-<p>To emit a signal, we instantiate the <code>emit</code> function template with a signal type, passing the emitter object as the first argument. The rest of the arguments follow, as defined by the signal signature.</p>
+<p>In Synapse, signals are defined as function pointer typedefs. When a signal is emitted, the value returned from any connected function is discarded.  This enables the return type of the signal signature to be used as an identifier of the signal. For example, the following typedefs define two different signals, each taking one <code>int</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> sig1_;
+<span class="keyword">typedef</span> sig1_(*sig1)(<span class="predefined-type">int</span>);
+
+<span class="keyword">struct</span> sig2_;
+<span class="keyword">typedef</span> sig2_(*sig2)(<span class="predefined-type">int</span>);</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Below we define a UI type <code>button</code> that emits a Synapse signal <code>clicked</code> (which takes no arguments) when the member function <code>click</code> is called:</p>
+<p>The two defined signals are different because the return value of their respective signatures are of different type (<code>sig1_</code> vs. <code>sig2_</code>). By convention, these types are defined implicitly within each <code>typedef</code>. This makes the signal definitions more compact, if perhaps less intuitive:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">typedef</span> <span class="keyword">struct</span> sig1_(*sig1)(<span class="predefined-type">int</span>);
+<span class="keyword">typedef</span> <span class="keyword">struct</span> sig2_(*sig2)(<span class="predefined-type">int</span>);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To emit a Synapse signal, we instantiate the <code>emit</code> function template with a signal type, passing the emitter object as the first argument. The rest of the arguments follow, as defined by the signal signature.</p>
+</div>
+<div class="paragraph">
+<p>As an example, let&#8217;s define a type <code>button</code> that emits a Synapse signal <code>clicked</code> (which takes no arguments) when the member function <code>click</code> is called:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -690,10 +711,7 @@ Synapse is not part of Boost.
 </div>
 </div>
 <div class="paragraph">
-<p>To receive a signal emitted by an object, we need to connect at least one function to it. Emitting a signal calls all conected functions, in the order in which the connections were created.</p>
-</div>
-<div class="paragraph">
-<p>Below, we connect the signal <code>button::clicked</code> to the <code>accept</code> member function of a dialog box object:</p>
+<p>Next, let&#8217;s connect the signal <code>button::clicked</code> to the <code>accept</code> member function of a dialog box object:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -721,6 +739,9 @@ synapse::connect&lt;button::clicked&gt;(emitter, receiver, &amp;dialog::accept);
         d-&gt;accept();
     } );</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>With this setup, <code>click()</code>-ing  the <code>button</code> will <code>accept()</code> the <code>dialog</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
