@@ -759,7 +759,7 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 <div class="sect2">
 <h3 id="_emitting_signals_from_objects_of_3rd_party_types">Emitting signals from objects of 3rd-party types</h3>
 <div class="paragraph">
-<p>In Synapse, any object whatsoever can be used as an emitter. This makes it possible to <code>emit</code> non-intrusively even if the emitter object was not designed to support signals. For example, a function that processes a file can use a standard <code>FILE</code> pointer as a Synapse emitter to report on its progress:</p>
+<p>The <code>button</code>/<code>dialog</code> example from the previous section could have been similarly implemented using any other signal programming library, because the <code>button</code> type is specifically designed to be able to emit the <code>clicked</code> signal. But in Synapse, any object whatsoever can be used as an emitter. This makes it possible to <code>emit</code> non-intrusively even if the emitter object was not designed to support signals. For example, a function that processes a file can use a standard <code>FILE</code> pointer as a Synapse emitter to report on its progress:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -778,7 +778,7 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 </div>
 </div>
 <div class="paragraph">
-<p>Outside of <code>process_file</code> the <code>report_progress</code> signal can be connected to some user interface function that updates a progress bar. Using Qt, this could look like this:</p>
+<p>Outside of <code>process_file</code> the <code>report_progress</code> signal can be connected to some user interface function that updates a progress bar. For example, using Synapse, we could easily connect it to a Qt <code>QProgressBar</code> object:</p>
 </div>
 <div class="listingblock">
 <div class="content">
