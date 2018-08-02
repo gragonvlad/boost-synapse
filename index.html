@@ -667,34 +667,34 @@ Synapse is not part of Boost.
 <div class="sect2">
 <h3 id="_signals_emitters_receivers">Signals, emitters, receivers</h3>
 <div class="paragraph">
-<p>Typically, signal programming libraries allow user-defined objects to define <em>signals</em> and to act as signal emitters. Like function types, each signal has a signature. Emitting a signal is similar to a function call, but instead of calling a particular function, it calls all functions that are currently connected to that particular signal from that particular emitter object. Naturally, the signature of any connected function must match the signature of the signal.</p>
+<p>Signal programming libraries allow user-defined objects to define <em>signals</em> and to act as signal <em>emitters</em>. Like function types, each signal has a signature. Emitting a signal is similar to a function call, but instead of calling a particular function, it calls all functions that currently connect that particular signal from that particular emitter object. Naturally, the signature of any connected function must match the signature of the signal.</p>
 </div>
 <div class="paragraph">
-<p>In Synapse, signals are defined as function pointer typedefs. When a signal is emitted, the value returned from any connected function is discarded.  This enables the return type of the signal signature to be used as an identifier of the signal. For example, the following typedefs define two different signals, each taking one <code>int</code>:</p>
+<p>In Synapse, signals are defined as function pointer typedefs. When a signal is emitted, the value returned from any connected function is discarded, but the return type of the signal definition is still important: it is used as an identifier of the signal, a way to tell apart different signals that have otherwise identical signatures. For example, the following typedefs define two different signals, even though they both take one <code>int</code> argument:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> sig1_;
-<span class="keyword">typedef</span> sig1_(*sig1)(<span class="predefined-type">int</span>);
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> this_signal_;
+<span class="keyword">typedef</span> this_signal_(*this_signal)(<span class="predefined-type">int</span>);
 
-<span class="keyword">struct</span> sig2_;
-<span class="keyword">typedef</span> sig2_(*sig2)(<span class="predefined-type">int</span>);</code></pre>
+<span class="keyword">struct</span> that_signal_;
+<span class="keyword">typedef</span> that_signal_(*that_signal)(<span class="predefined-type">int</span>);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The two defined signals are different because the return value of their respective signatures are of different type (<code>sig1_</code> vs. <code>sig2_</code>). By convention, these types are defined implicitly within each <code>typedef</code>. This makes the signal definitions more compact, if perhaps less intuitive:</p>
+<p>The two defined signals are different because they use different return types (<code>this_signal_</code> vs. <code>that_signal_</code>). By convention, these types are defined implicitly within each <code>typedef</code>. This makes the signal definitions more compact:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">typedef</span> <span class="keyword">struct</span> sig1_(*sig1)(<span class="predefined-type">int</span>);
-<span class="keyword">typedef</span> <span class="keyword">struct</span> sig2_(*sig2)(<span class="predefined-type">int</span>);</code></pre>
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">typedef</span> <span class="keyword">struct</span> this_signal_(*this_signal)(<span class="predefined-type">int</span>);
+<span class="keyword">typedef</span> <span class="keyword">struct</span> that_signal_(*that_signal)(<span class="predefined-type">int</span>);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To emit a Synapse signal, we instantiate the <code>emit</code> function template with a signal type, passing the emitter object as the first argument. The rest of the arguments follow, as defined by the signal signature.</p>
+<p>To emit a Synapse signal, we instantiate the <code>emit</code> function template with a pre-defined signal <code>typedef</code> (e.g. <code>this_signal</code>), passing the emitter object as the first argument. The rest of the arguments follow, as defined by the signal signature (in this case a single <code>int</code> argument).</p>
 </div>
 <div class="paragraph">
-<p>As an example, let&#8217;s define a type <code>button</code> that emits a Synapse signal <code>clicked</code> (which takes no arguments) when the member function <code>click</code> is called:</p>
+<p>As a more complete example, let&#8217;s define a type <code>button</code> that emits a Synapse signal <code>clicked</code> (which takes no arguments) when the member function <code>click</code> is called:</p>
 </div>
 <div class="listingblock">
 <div class="content">
