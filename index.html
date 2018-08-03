@@ -682,7 +682,7 @@ Synapse is not part of Boost.
 </div>
 </div>
 <div class="paragraph">
-<p>The two defined signals are different because they use different return types (<code>this_signal_</code> vs. <code>that_signal_</code>). By convention, these types are defined implicitly within each <code>typedef</code>. This makes the signal definitions more compact:</p>
+<p>The two defined signals are different because they use different return types (<code>this_signal_</code> vs. <code>that_signal_</code>). By convention, the return types are defined implicitly within each <code>typedef</code>. This makes the signal definitions more compact:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -691,7 +691,7 @@ Synapse is not part of Boost.
 </div>
 </div>
 <div class="paragraph">
-<p>To emit a Synapse signal, we instantiate the <code>emit</code> function template with a pre-defined signal <code>typedef</code> (e.g. <code>this_signal</code>), passing the emitter object as the first argument. The rest of the arguments follow, as defined by the signal signature (in this case a single <code>int</code> argument).</p>
+<p>To emit a Synapse signal, we instantiate the <code>emit</code> function template with a pre-defined signal <code>typedef</code> (e.g. <code>this_signal</code>), passing the emitter object as the first argument. The rest of the arguments follow, as defined by the signal signature (in this case a single <code>int</code> argument). Note that the emitter object passed as the first argument to <code>emit&lt;S&gt;</code> is not forwarded implicitly to the connected functions; its only purpose is to specify the <em>emitter</em>, that is, which object is emitting the signal <code>S</code>.</p>
 </div>
 <div class="paragraph">
 <p>As a more complete example, let&#8217;s define a type <code>button</code> that emits a Synapse signal <code>clicked</code> (which takes no arguments) when the member function <code>click</code> is called:</p>
@@ -759,7 +759,7 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 <div class="sect2">
 <h3 id="_emitting_signals_from_objects_of_3rd_party_types">Emitting signals from objects of 3rd-party types</h3>
 <div class="paragraph">
-<p>The <code>button</code>/<code>dialog</code> example from the previous section could have been similarly implemented using any other signal programming library, because the <code>button</code> type is specifically designed to be able to emit the <code>clicked</code> signal. But in Synapse, any object whatsoever can be used as an emitter. This makes it possible to <code>emit</code> non-intrusively even if the emitter object was not designed to support signals. For example, a function that processes a file can use a standard <code>FILE</code> pointer as a Synapse emitter to report on its progress:</p>
+<p>The <code>button</code>/<code>dialog</code> example from the previous section could have been similarly implemented using any other signal programming library, because the <code>button</code> type is specifically designed to be able to emit the <code>clicked</code> signal. But in Synapse, any object whatsoever can be used as an emitter. This makes it possible to <code>emit</code> non-intrusively even if the type of the emitter object was not designed to support signals. For example, a function that processes a file can use a standard <code>FILE</code> pointer as a Synapse emitter to report on its progress:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -794,6 +794,9 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 <div class="paragraph">
 <p>Notice that <code>process_file</code> is not coupled with <code>QProgressBar</code>: the <code>report_progress</code> signal could be connected to a different function or not connected at all, in which case the call to <code>emit</code> would be a no-op.</p>
 </div>
+<div class="paragraph">
+<p>The cautious reader has surely noticed that in the above example we had to capture the return value of <code>synapse::connect&lt;report_progress&gt;</code> in  <code>c</code>, while we didn&#8217;t have to do this in the previous <code>button</code>/<code>dialog</code> example. This is explained below.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_managing_connection_lifetime">Managing connection lifetime</h3>
@@ -803,10 +806,10 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 <div class="ulist">
 <ul>
 <li>
-<p><code>shared_ptr&lt;<a href="#connection">connection</a>&gt;</code> objects are returned by overloads of <a href="#connect"><code>connect</code></a> which take the emitter (and, if specified, the receiver) as a raw pointer. The user is required to keep the <code>connection</code> object alive; the signal is disconnected when that object expires.</p>
+<p><code>shared_ptr&lt;<a href="#connection">connection</a>&gt;</code> objects are returned by overloads of <a href="#connect"><code>connect</code></a> which take the emitter (and, if specified, the receiver) as a raw pointer. The user is required to keep the <code>connection</code> object alive; the function will be disconnected when that object expires.</p>
 </li>
 <li>
-<p><code>weak_ptr&lt;<a href="#pconnection">pconnection</a>&gt;</code> objects are returned by overloads of <a href="#connect"><code>connect</code></a> which take at least one of the emitter or the receiver as a <code>weak_ptr</code> or <code>shared_ptr</code>. The user is <em>not</em> required to keep <code>pconnection</code> objects alive; the connection is disconnected when Synapse detects that the emitter or the receiver have expired.</p>
+<p><code>weak_ptr&lt;<a href="#pconnection">pconnection</a>&gt;</code> objects are returned by overloads of <a href="#connect"><code>connect</code></a> which take at least one of the emitter or the receiver as a <code>weak_ptr</code> or <code>shared_ptr</code>. The user is <em>not</em> required to keep <code>pconnection</code> objects alive; the function is disconnected when Synapse detects that the emitter or the receiver have expired.</p>
 </li>
 </ul>
 </div>
@@ -817,19 +820,7 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-The <a href="#release"><code>release</code></a> function can be used to convert a <a href="#pconnection"><code>pconnection</code></a> object to a <a href="#connection"><code>connection</code></a> object, in case we need to control its lifetime explicitly.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Earlier Synapse versions lacked support for <code>pconnection</code> objects, meaning the user was always required to manage connections explicitly. Legacy Synapse is available in the <code>legacy</code> branch of the <a href="https://github.com/zajo/boost-synapse">GitHub repository</a>.
+The <a href="#release"><code>release</code></a> function can be used to convert a <a href="#pconnection"><code>weak_ptr&lt;pconnection&gt;</code></a> object to a <a href="#connection"><code>shared_ptr&lt;connection&gt;</code></a> object, in case we need to disconnect the function before the receiver or the emitter have expired.
 </td>
 </tr>
 </table>
@@ -906,10 +897,10 @@ Blocking affects pre-existing as well as future connections.
 <p>Synapse features a special global emitter that emits meta signals to notify connected functions about user interactions with other signals. It can be accessed by the <a href="#meta::connected"><code>meta::emitter</code></a> function.</p>
 </div>
 <div class="paragraph">
-<p>When a <code>Signal</code> is blocked or unblocked, the meta emitter emits the <code>meta::blocked&lt;Signal&gt;</code> signal. Connecting this signal allows the blocked state of the signal to be automatically reflected in other systems, for example in user interface.</p>
+<p>When a signal <code>S</code> is blocked or unblocked, the meta emitter emits the <code>meta::blocked&lt;S&gt;</code> signal. Connecting this <code>meta::blocked&lt;S&gt;</code> signal allows the blocked state of the signal <code>S</code> to be automatically reflected in other systems, for example in user interface.</p>
 </div>
 <div class="paragraph">
-<p>Similarly, when a <code>Signal</code> is connected or disconnected, the meta emitter emits the <a href="#meta::connected"><code>meta::connected&lt;Signal&gt;</code></a> signal. This meta signal is useful for integrating Synapse with 3rd-party callback systems; see <a href="#_synapsifying_c_callbacks">Synapsifying C callbacks</a>.</p>
+<p>Similarly, when a signal <code>S</code> is connected or disconnected, the meta emitter emits the <a href="#meta::connected"><code>meta::connected&lt;S&gt;</code></a> signal, which is useful when integrating Synapse with 3rd-party callback systems; see <a href="#_synapsifying_c_callbacks">Synapsifying C callbacks</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -918,7 +909,7 @@ Blocking affects pre-existing as well as future connections.
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-To further facilitate the integration of Synapse with 3rd-partty callback systems, <a href="#connection"><code>connection</code></a>  objects (returned by the <a href="#connect"><code>connect</code></a> function) can store arbitrary user data.
+To further facilitate the integration of Synapse with 3rd-partty callback systems, <a href="#connection"><code>connection</code></a>/<a href="#pconnection"><code>pconnection</code></a>  objects (returned by overloads of <a href="#connect"><code>connect</code></a>) can store arbitrary user data.
 </td>
 </tr>
 </table>
