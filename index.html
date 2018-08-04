@@ -593,10 +593,13 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="_abstract">Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Synapse is a C++ signal programming library. It can be used to define communication channels between objects of arbitrary types in a dynamic object environment.</p>
+<p>Synapse is a C++ signal programming library.</p>
 </div>
 <div class="paragraph">
-<p>Synapse is non-intrusive: it allows any object of any type whatsoever to be used as a signal emitter; if two contexts in a given program happen to have access to the same object, they can use that object to communicate through Synapse signals.</p>
+<p>While other similar libraries allow users to create types that can emit signals, Synapse is able to emit any signal from any object of any type whatsoever. If two contexts in a given program happen to have access to the same object, they can use that object, regardless of its type, to communicate through Synapse signals.</p>
+</div>
+<div class="paragraph">
+<p>Meta signals can be used to integrate Synapse with 3rd-party APIs. In particular, Synapse enables C++ function objects, including lambda functions, to be used as callbacks even with C-style interfaces which only support C function pointer callbacks.</p>
 </div>
 </div>
 </div>
@@ -795,7 +798,7 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 </div>
 </div>
 <div class="paragraph">
-<p>Notice that <code>process_file</code> is not coupled with <code>QProgressBar</code>: the <code>report_progress</code> signal could be connected to a different function or not connected at all, in which case the call to <code>emit</code> would be a no-op.</p>
+<p>Notice that <code>process_file</code> is not coupled with <code>QProgressBar</code>: the <code>report_progress</code> signal could be connected to a different function or not connected at all, in which case the call to <code>emit</code> in <code>process_file</code> would be a no-op.</p>
 </div>
 <div class="paragraph">
 <p>The cautious reader has surely noticed that in the above example we had to capture the return value of <code>synapse::connect&lt;report_progress&gt;</code> in the local variable  <code>c</code>, while we didn&#8217;t have to do this in the previous <code>button</code>/<code>dialog</code> example. This is explained below.</p>
@@ -2745,7 +2748,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 <h2 id="_alternatives_to_synapse">Alternatives to Synapse</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>See this <a href="https://en.wikipedia.org/wiki/Signals_and_slots#Alternative_implementations">Wikipedia page</a>.</p>
+<p>For a list of other signal programming libraries, see this <a href="https://en.wikipedia.org/wiki/Signals_and_slots#Alternative_implementations">Wikipedia page</a>, however Synapse is unique in that it is non-intrusive with respect to the signal emitter type. While other libraries allow users to create types that can emit signals, Synapse is able to emit any signal from any object of any type whatsoever.</p>
 </div>
 </div>
 </div>
