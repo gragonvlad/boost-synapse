@@ -2748,8 +2748,59 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 <h2 id="_alternatives_to_synapse">Alternatives to Synapse</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For a list of other signal programming libraries, see this <a href="https://en.wikipedia.org/wiki/Signals_and_slots#Alternative_implementations">Wikipedia page</a>, however Synapse is unique in that it is non-intrusive with respect to the signal emitter type. While other libraries allow users to create types that can emit signals, Synapse is able to emit any signal from any object of any type whatsoever.</p>
+<p>For a list of other signal programming libraries, see this <a href="https://en.wikipedia.org/wiki/Signals_and_slots#Alternative_implementations">Wikipedia page</a>.</p>
 </div>
+<div class="paragraph">
+<p>The unique design feature of Synapse is that it is non-intrusive with respect to the signal emitter type. While other libraries provide users with objects that can emit signals, Synapse is able to emit any signal from any object of any type whatsoever.</p>
+</div>
+<div class="paragraph">
+<p>Since Synapse is formatted for Boost review, people often ask what are the differences between Synapse and <a href="https://www.boost.org/doc/libs/release/doc/html/signals2.html">Boost Signals 2</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Comparison between Synapse and Signals 2</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Signals 2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Synapse</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What is a signal?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object of type <code>signal&lt;T&gt;</code>, which maintains a list of connected functions, and is callable like <code>std::function&lt;T&gt;</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A type, similar to a C function pointer <code>typedef</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">How do I emit a signal?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Invoking <code>operator()</code> on a signal object calls all connected functions.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Calling <a href="#emit"><code>emit&lt;S&gt;(e)</code></a> calls all functions connecting the signal <code>S</code> for the emitter <code>e</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What objects can emit signals?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Only instances of the <code>signal&lt;T&gt;</code> class template.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any object of any type whatsoever: the <a href="#emit"><code>emit&lt;S&gt;(e)</code></a> function template takes <code>e</code> as a <code>void</code> pointer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Support for meta signals?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No (not possible, a signal is an object).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes. For example, connecting a signal of type <code>S</code> emits the signal <a href="#meta::connected"><code>meta::connected&lt;S&gt;</code></a> from the <a href="#meta::connected"><code>meta::emitter</code></a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Integration with C-style callback APIs?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No (not possible).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes, through meta signals, see <a href="#_synapsifying_c_callbacks">Synapsifying C callbacks</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Thread safety?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes, the connection list maintained in each signal object is thread-safe.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes, the connection lists are thread-local, and signals are transported to other threads using <a href="#thread_local_queue"><code>thread_local_queue</code></a> objects.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
