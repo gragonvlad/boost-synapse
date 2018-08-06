@@ -2757,7 +2757,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 <p>Since Synapse is formatted for Boost review, people often ask what are the differences between Synapse and <a href="https://www.boost.org/doc/libs/release/doc/html/signals2.html">Boost Signals 2</a>.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Comparison between Synapse and Signals 2</caption>
+<caption class="title">Table 1. Comparison between Signals 2 and Synapse</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -2777,7 +2777,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">How do I emit a signal?</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Invoking <code>operator()</code> on a signal object calls all connected functions.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Calling <a href="#emit"><code>emit&lt;S&gt;(e)</code></a> calls all functions connecting the signal <code>S</code> for the emitter <code>e</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Calling <a href="#emit"><code>emit&lt;S&gt;(e,&#8230;&#8203;)</code></a> calls all functions connecting the signal <code>S</code> for the emitter <code>e</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">What objects can emit signals?</p></td>
@@ -2787,7 +2787,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Support for meta signals?</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">No (not possible, a signal is an object).</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Yes. For example, connecting a signal of type <code>S</code> emits the signal <a href="#meta::connected"><code>meta::connected&lt;S&gt;</code></a> from the <a href="#meta::connected"><code>meta::emitter</code></a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes. Connecting a signal of type <code>S</code> emits the signal <a href="#meta::connected"><code>meta::connected&lt;S&gt;</code></a> from the <a href="#meta::connected"><code>meta::emitter</code></a>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Integration with C-style callback APIs?</p></td>
@@ -2795,7 +2795,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 <td class="tableblock halign-left valign-top"><p class="tableblock">Yes, through meta signals, see <a href="#_synapsifying_c_callbacks">Synapsifying C callbacks</a>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Thread safety?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multi-threading support?</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Yes, the connection list maintained in each signal object is thread-safe.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Yes, the connection lists are thread-local, and signals are transported to other threads using <a href="#thread_local_queue"><code>thread_local_queue</code></a> objects.</p></td>
 </tr>
