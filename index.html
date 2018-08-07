@@ -705,11 +705,11 @@ Synapse is not part of Boost.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">class</span> <span class="class">button</span> {
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">typedef</span> <span class="keyword">struct</span> clicked_(*clicked)();
+
+<span class="keyword">class</span> <span class="class">button</span> {
 
     <span class="directive">public</span>:
-
-    <span class="keyword">typedef</span> <span class="keyword">struct</span> clicked_(*clicked)();
 
     <span class="directive">void</span> click() {
         synapse::emit&lt;clicked&gt;(<span class="local-variable">this</span>);
@@ -717,8 +717,20 @@ Synapse is not part of Boost.
 };</code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It is possible to define the <code>clicked</code> <code>typedef</code> as a member of <code>class button</code>, but this coupling is usually not appropriate when using Synapse. It is better to treat signals as types with independent semantics that can be used with any appropriate object. In this case, anything clickable could emit the <code>clicked</code> signal.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Next, let&#8217;s connect the signal <code>button::clicked</code> to the <code>accept</code> member function of a dialog box object:</p>
+<p>Next, let&#8217;s connect the signal <code>clicked</code> to the <code>accept</code> member function of a dialog box object:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -733,7 +745,7 @@ Synapse is not part of Boost.
 ....
 shared_ptr&lt;button&gt; emitter=make_shared&lt;button&gt;();
 shared_ptr&lt;dialog&gt; receiver=make_shared&lt;dialog&gt;();
-synapse::connect&lt;button::clicked&gt;(emitter, receiver, &amp;dialog::accept);</code></pre>
+synapse::connect&lt;clicked&gt;(emitter, receiver, &amp;dialog::accept);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -741,7 +753,7 @@ synapse::connect&lt;button::clicked&gt;(emitter, receiver, &amp;dialog::accept);
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">synapse::connect&lt;button::clicked&gt;(emitter, receiver,
+<pre class="CodeRay highlight"><code data-lang="c++">synapse::connect&lt;clicked&gt;(emitter, receiver,
     [ ](dialog * d) {
         d-&gt;accept();
     } );</code></pre>
