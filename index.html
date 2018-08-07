@@ -578,8 +578,12 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_using_synapse_with_qt_to_avoid_mocing">Using Synapse with Qt to avoid MOCing</a></li>
 </ul>
 </li>
-<li><a href="#_use_case_synapsifying_glfw">Use case: synapsifying GLFW</a></li>
-<li><a href="#_alternatives_to_synapse">Alternatives to Synapse</a></li>
+<li><a href="#_case_study_synapsifying_glfw">Case study: synapsifying GLFW</a></li>
+<li><a href="#_alternatives_to_synapse">Alternatives to Synapse</a>
+<ul class="sectlevel2">
+<li><a href="#_comparison_to_boost_signals2">Comparison to Boost Signals2</a></li>
+</ul>
+</li>
 <li><a href="#_macros_and_configuration">Macros and configuration</a></li>
 <li><a href="#_building_and_installation">Building and installation</a></li>
 <li><a href="#_building_the_unit_tests_and_the_examples">Building the unit tests and the examples</a></li>
@@ -2349,7 +2353,7 @@ Window::Window(QWidget *parent) :
 </div>
 </div>
 <div class="sect1">
-<h2 id="_use_case_synapsifying_glfw">Use case: synapsifying GLFW</h2>
+<h2 id="_case_study_synapsifying_glfw">Case study: synapsifying GLFW</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Synapse integrates well with some C event handling APIs. As an example, let&#8217;s consider <a href="http://www.glfw.org/">GLFW</a>.</p>
@@ -2571,7 +2575,6 @@ The above <code>glfw_synapsify.hpp</code> should be included in exactly one comp
 <span class="comment">//    distribution.</span>
 <span class="comment">//</span>
 <span class="comment">//========================================================================</span>
-<span class="comment">//! [code]</span>
 
 <span class="preprocessor">#include</span> <span class="include">&quot;glfw_synapsify.hpp&quot;</span> <i class="conum" data-value="1"></i><b>(1)</b>
 <span class="keyword">namespace</span> synapse = boost::synapse;
@@ -2721,9 +2724,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
     glfwTerminate();
     exit(EXIT_SUCCESS);
-}
-
-<span class="comment">//! [code]</span></code></pre>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2748,41 +2749,50 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 <h2 id="_alternatives_to_synapse">Alternatives to Synapse</h2>
 <div class="sectionbody">
 <div class="paragraph">
+<p>The unique design feature of Synapse is that it is non-intrusive with respect to the emitter object type. While other libraries provide users with types that can emit signals, Synapse is able to emit any signal from any object of any type whatsoever.</p>
+</div>
+<div class="paragraph">
 <p>For a list of other signal programming libraries, see this <a href="https://en.wikipedia.org/wiki/Signals_and_slots#Alternative_implementations">Wikipedia page</a>.</p>
 </div>
+<div class="sect2">
+<h3 id="_comparison_to_boost_signals2">Comparison to Boost Signals2</h3>
 <div class="paragraph">
-<p>The unique design feature of Synapse is that it is non-intrusive with respect to the signal emitter type. While other libraries provide users with objects that can emit signals, Synapse is able to emit any signal from any object of any type whatsoever.</p>
-</div>
-<div class="paragraph">
-<p>Since Synapse is formatted for Boost review, people often ask what are the differences between Synapse and <a href="https://www.boost.org/doc/libs/release/doc/html/signals2.html">Boost Signals 2</a>.</p>
+<p>Because Synapse is formatted for Boost review, people often ask what are the differences between Synapse and <a href="https://www.boost.org/doc/libs/release/doc/html/signals2.html">Boost Signals2</a>.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. Comparison between Signals 2 and Synapse</caption>
+<caption class="title">Table 1. Comparison between Signals2 and Synapse</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
 <col style="width: 33.3334%;">
 </colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top">Signals2</th>
+<th class="tableblock halign-left valign-top">Synapse</th>
+</tr>
+</thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Signals 2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Synapse</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">What is a signal?</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">An object of type <code>signal&lt;T&gt;</code>, which maintains a list of connected functions, and is callable like <code>std::function&lt;T&gt;</code>.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A type, similar to a C function pointer <code>typedef</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An object of type <code>signal&lt;T&gt;</code>, which maintains a list of connected functions, and is callable like <code>std::function&lt;T&gt;</code> is.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A type, a C function pointer <code>typedef</code>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">How do I emit a signal?</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Invoking <code>operator()</code> on a signal object calls all connected functions.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Calling <a href="#emit"><code>emit&lt;S&gt;(e,&#8230;&#8203;)</code></a> calls all functions connecting the signal <code>S</code> for the emitter <code>e</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">How does emitting a signal work?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Invoking <code>s(&#8230;&#8203;)</code>, where <code>s</code> is of type <code>signal&lt;T&gt;</code>, calls all connected functions.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Invoking <a href="#emit"><code>emit&lt;S&gt;(e,&#8230;&#8203;)</code></a> calls all functions connecting the signal <code>S</code> for the object <code>e</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">What objects can emit signals?</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Only instances of the <code>signal&lt;T&gt;</code> class template.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Any object of any type whatsoever: the <a href="#emit"><code>emit&lt;S&gt;(e)</code></a> function template takes <code>e</code> as a <code>void</code> pointer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">How does connecting a signal work?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Calling <code>s.connect(f)</code>, where <code>s</code> is of type <code>signal&lt;T&gt;</code>, connects the function <code>f</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Calling <a href="#connect"><code>connect&lt;S&gt;(e,f)</code></a> connects the signal <code>S</code> from the emitter object <code>e</code> to the function <code>f</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Support for meta signals?</p></td>
@@ -2799,8 +2809,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 <td class="tableblock halign-left valign-top"><p class="tableblock">Yes, the connection list maintained in each signal object is thread-safe.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Yes, the connection lists are thread-local, and signals are transported to other threads using <a href="#thread_local_queue"><code>thread_local_queue</code></a> objects.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Can connected functions return values?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes, there is an elaborate system for dealing with multiple returns when a signal is invoked.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No, but of course it&#8217;s possible to pass an argument by reference or a custom object to collect and/or accumulate the results if needed.</p></td>
+</tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -3000,10 +3016,6 @@ The <code>init</code> argument passed will contain parentheses, so when the macr
 <div class="sectionbody">
 <div class="qlist qanda">
 <ol>
-<li>
-<p><em>How does Synapse differ from Boost Signals 2?</em></p>
-<p>The main design difference is that in Boost Signals 2 is intrusive; only objects of a specific Boost Signals 2 type can emit signals. This is a significant limitation because in general it is not trivial to associate a Boost Signals 2 signal object with 3rd-party objects. When using Synapse such association is not necessary because the 3rd-party object itself can be passed to <a href="#emit"><code>emit</code></a>.</p>
-</li>
 <li>
 <p><em>Is there a way to stop the emit loop before all connected functions have been called?</em></p>
 <p>No, except by throwing an exception.</p>
