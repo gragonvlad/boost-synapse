@@ -544,6 +544,7 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel2">
 <li><a href="#emit"><code>emit</code></a></li>
 <li><a href="#connect"><code>connect</code></a></li>
+<li><a href="#release"><code>release</code></a></li>
 <li><a href="#translate"><code>translate</code></a></li>
 <li><a href="#connection"><code>connection</code></a></li>
 <li><a href="#pconnection"><code>pconnection</code></a>
@@ -1464,6 +1465,36 @@ The passed <a href="#connection"><code>connection</code></a> object can be used 
 <dt class="hdlist1">Thread safety: </dt>
 <dd>
 <p>Please see <a href="#emit"><code>emit</code></a> and <a href="#thread_local_queue"><code>thread_local_queue</code></a>.</p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="release"><code>release</code></h3>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">#include &lt;boost/synapse/connect.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> synapse {
+
+    <span class="keyword">class</span> <span class="class">connection</span>;
+    <span class="keyword">class</span> <span class="class">pconnection</span>;
+
+    shared_ptr&lt;connection <span class="directive">const</span>&gt; release( weak_ptr&lt;pconnection <span class="directive">const</span>&gt; <span class="directive">const</span> &amp; c );
+    shared_ptr&lt;connection&gt; release( weak_ptr&lt;pconnection&gt; <span class="directive">const</span> &amp; c );
+
+} }</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p>Converts a weak <a href="#pconnection"><code>pconnection</code></a> reference to shared ownership <a href="#connection"><code>connection</code></a> reference. The lifetime of the connection is now explicitly managed by the returned <code>shared_ptr</code> object; see <a href="#connect"><code>connect</code></a>.</p>
 </dd>
 </dl>
 </div>
