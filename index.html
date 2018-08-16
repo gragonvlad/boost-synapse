@@ -597,13 +597,16 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="_abstract">Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Synapse is a C++ signal programming library.</p>
+<p>Synapse is a non-intrusive C++ signal programming library.</p>
 </div>
 <div class="paragraph">
-<p>While other similar libraries allow users to create types that can emit signals, Synapse is able to emit any signal from any object of any type whatsoever. If two contexts in a given program happen to have access to the same object, they can use that object, regardless of its type, to communicate through Synapse signals.</p>
+<p>"Non-intrusive" in this context means that the library is able to register connections and emit signals from any C or C++ object of any type whatsoever. If two contexts share access to a C or C++ object, they can use that object as a randezvouz point of sorts, and communicate with each other through Synapse signals.</p>
 </div>
 <div class="paragraph">
-<p>Meta signals can be used to integrate Synapse with 3rd-party APIs. In particular, Synapse enables C++ function objects, including lambda functions, to be used as callbacks even with C-style interfaces which only support C function pointer callbacks.</p>
+<p>A system of meta signals provides interoperability with other signal programming libraries and callback APIs. In particular Synapse can be used to safely register C++ function objects, including lambda functions, with any C-style callback API that is designed to work only with C function pointers.</p>
+</div>
+<div class="paragraph">
+<p>In a multi-thread environment signals can be emitted asynchronously and scheduled for synchronous execution when requested by other threads.</p>
 </div>
 </div>
 </div>
