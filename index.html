@@ -600,13 +600,13 @@ table.CodeRay td.code>pre{padding:0}
 <p>Synapse is a non-intrusive C++ signal programming library.</p>
 </div>
 <div class="paragraph">
-<p>"Non-intrusive" in this context means that the library is able to register connections and emit signals from any C or C++ object of any type whatsoever. If two contexts share access to a C or C++ object, they can use that object as a randezvouz point of sorts, and communicate with each other through Synapse signals.</p>
+<p>It is able to register connections and emit signals from any C or C++ object of any type whatsoever. If two contexts share access to a C or C++ object, they can use that object as a randezvouz point of sorts, and communicate with each other through Synapse signals.</p>
 </div>
 <div class="paragraph">
 <p>A system of meta signals provides interoperability with other signal programming libraries and callback APIs. In particular Synapse can be used to safely register C++ function objects, including lambda functions, with any C-style callback API that is designed to work only with C function pointers.</p>
 </div>
 <div class="paragraph">
-<p>In a multi-thread environment signals can be emitted asynchronously and scheduled for synchronous execution when requested by other threads.</p>
+<p>In a multi-thread environment signals can be emitted asynchronously and scheduled for synchronous execution when requested in other threads.</p>
 </div>
 </div>
 </div>
@@ -677,7 +677,7 @@ Synapse is not part of Boost.
 <div class="sect2">
 <h3 id="_signals_emitters_receivers">Signals, emitters, receivers</h3>
 <div class="paragraph">
-<p>Signal programming libraries allow user-defined objects to define <em>signals</em> and to act as signal <em>emitters</em>. Like function types, each signal has a signature. Emitting a signal is similar to a function call, but instead of calling a particular function, it calls all functions that currently connect that particular signal from that particular emitter object. Naturally, the signature of any connected function must match the signature of the signal.</p>
+<p>Signal programming libraries allow <em>signals</em> to be associated with emitter objects. Like function types, each signal has a signature. Emitting a signal is similar to function invocation, except it may call multiple functions that currently connect that particular signal from that particular emitter object. Naturally, the signature of any connected function must match the signature of the signal.</p>
 </div>
 <div class="paragraph">
 <p>In Synapse, signals are defined as function pointer typedefs. When a signal is emitted, the value returned from any connected function is discarded, but the return type of the signal definition is still important: it is used as an identifier of the signal, a way to tell apart different signals that have otherwise identical signatures. For example, the following typedefs define two different signals, even though they both take one <code>int</code> argument:</p>
@@ -720,11 +720,11 @@ Synapse is not part of Boost.
 };</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 It is possible to define the <code>clicked</code> <code>typedef</code> as a member of <code>class button</code>, but this coupling is usually not appropriate when using Synapse. It is better to treat signals as types with independent semantics that can be used with any appropriate object. In this case, anything clickable could emit the <code>clicked</code> signal.
@@ -820,7 +820,7 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 <p>Notice that <code>process_file</code> is not coupled with <code>QProgressBar</code>: the <code>report_progress</code> signal could be connected to a different function or not connected at all, in which case the call to <code>emit</code> in <code>process_file</code> would be a no-op.</p>
 </div>
 <div class="paragraph">
-<p>The cautious reader has surely noticed that in the above example we had to capture the return value of <code>synapse::connect&lt;report_progress&gt;</code> in the local variable  <code>c</code>, while we didn&#8217;t have to do this in the previous <code>button</code>/<code>dialog</code> example. This is explained below.</p>
+<p>The observant reader has surely noticed that in the above example we had to capture the return value of <code>synapse::connect&lt;report_progress&gt;</code> in the local variable  <code>c</code>, while we didn&#8217;t have to do this in the previous <code>button</code>/<code>dialog</code> example. This is explained below.</p>
 </div>
 </div>
 <div class="sect2">
@@ -838,11 +838,11 @@ The <code>receiver</code> argument to <code>connect</code> is optional. If it is
 </li>
 </ul>
 </div>
-<div class="admonitionblock important">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-important" title="Important"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 The <a href="#release"><code>release</code></a> function can be used to convert a <a href="#pconnection"><code>weak_ptr&lt;pconnection&gt;</code></a> object to a <a href="#connection"><code>shared_ptr&lt;connection&gt;</code></a> object, in case we need to disconnect the function before the receiver or the emitter have expired.
@@ -934,7 +934,7 @@ Blocking affects pre-existing as well as future connections.
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-To further facilitate the integration of Synapse with 3rd-partty callback systems, <a href="#connection"><code>connection</code></a>/<a href="#pconnection"><code>pconnection</code></a>  objects (returned by overloads of <a href="#connect"><code>connect</code></a>) can store arbitrary user data.
+To further facilitate interoperability between Synapse and other callback APIs, <a href="#connection"><code>connection</code></a>/<a href="#pconnection"><code>pconnection</code></a>  objects (returned by overloads of <a href="#connect"><code>connect</code></a>) can store arbitrary user data.
 </td>
 </tr>
 </table>
@@ -948,7 +948,7 @@ To further facilitate the integration of Synapse with 3rd-partty callback system
 <p>Synapse can be used to implement interthread communication using signals. The data structures created by <a href="#connect"><code>connect</code></a> (or <a href="#translate"><code>translate</code></a>) use thread-local storage, so by default calling <a href="#emit"><code>emit</code></a> will call only functions connected by the calling thread (and will not return until all such functions have been called in order, or one of them throws.)</p>
 </div>
 <div class="paragraph">
-<p>The following diagram shows the connections created (by calls to <code><a href="#connect">connect</a>&lt;S&gt;</code>) in a single thread for a given signal type <code>S</code>, each connecting an emitter to a function. When <code><a href="#emit">emit</a>&lt;S&gt;(e1,arg,&#8230;&#8203;)</code> is called, all functions connected (for <code>S</code>) to the given emitter <code>e1</code> are called (in the order in which the connections were created):</p>
+<p>The following diagram shows the connections created (by calls to <code><a href="#connect">connect</a>&lt;S&gt;</code>) in a single thread for a given signal type <code>S</code>, each connecting an emitter to a function. When <code><a href="#emit">emit</a>&lt;S&gt;(e1,arg,&#8230;&#8203;)</code> is called, all functions connecing the signal <code>S</code> from the given emitter <code>e1</code> are called in the order in which the connections were created:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -956,7 +956,7 @@ To further facilitate the integration of Synapse with 3rd-partty callback system
 </div>
 </div>
 <div class="paragraph">
-<p>It is also possible for any thread to request to receive all signals emitted by other threads, by creating its own <a href="#thread_local_queue"><code>thread_local_queue</code></a> object using <a href="#create_thread_local_queue"><code>create_thread_local_queue</code></a>.</p>
+<p>It is also possible for any thread to request to receive all signals emitted by other threads, by creating its own <a href="#thread_local_queue"><code>thread_local_queue</code></a> object.</p>
 </div>
 <div class="paragraph">
 <p>In this case, <em>in addition</em> to the behavior described above, <code><a href="#emit">emit</a>&lt;S&gt;(e1,arg,&#8230;&#8203;)</code> will capture its arguments (depending on the signature of <code>S</code>) and queue them into the <a href="#thread_local_queue"><code>thread_local_queue</code></a> object created by any thread <em>other</em> than the calling thread. Each such thread must poll its own <a href="#thread_local_queue"><code>thread_local_queue</code></a> regularly; this "emits" the queued objects locally and removes them from the queue (note that <a href="#poll"><code>poll</code></a> is not given an emitter or a signal type, it emits locally all queued objects, regardless of signal type or emitter).</p>
@@ -973,7 +973,7 @@ To further facilitate the integration of Synapse with 3rd-partty callback system
 <p>A typical use case for this system is to update user interface objects with data generated by one or multiple worker threads: the user interface objects themselves need not be thread-safe, because they will be updated only synchronously, at the time <a href="#poll"><code>poll</code></a> is called.</p>
 </div>
 <div class="paragraph">
-<p>Special care must be taken to ensure that any objects referred to by arguments passed to <a href="#emit"><code>emit</code></a> will remain valid until the time all other threads have polled their <a href="#thread_local_queue"><code>thread_local_queue</code></a> objects. For example, the following code is incorrect in the presence of <code>thread_local_queue</code> objects:</p>
+<p>Special care must be taken to ensure that any objects referred to by arguments passed to <a href="#emit"><code>emit</code></a> will remain valid at least until all other threads have polled their <a href="#thread_local_queue"><code>thread_local_queue</code></a> objects. For example, the following code is incorrect in the presence of <code>thread_local_queue</code> objects:</p>
 </div>
 <div class="listingblock">
 <div class="content">
