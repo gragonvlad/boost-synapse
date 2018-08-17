@@ -885,7 +885,7 @@ Blocking affects pre-existing as well as future connections.
 
     <span class="predefined-type">int</span> emitter;
 
-    <span class="directive">auto</span> c = synapse::connect&lt;my_signal&gt;(&amp;emitter,
+    <span class="directive">auto</span> c = synapse::connect&lt;print&gt;(&amp;emitter,
         [ ](std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; s) {
             std::cout &lt;&lt; s;
         } );
