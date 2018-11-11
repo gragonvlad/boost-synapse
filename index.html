@@ -471,30 +471,6 @@ kbd{font-family:"Anonymous Pro","DejaVu Sans Mono",monospace;display:inline-bloc
 .conum[data-value]{display:inline-block;color:#fff!important;background-color:#606060;-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
 .exampleblock>.content{background-color:#ffffff;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
 
-/*
-Barlow Semi Condensed
-Biryani
-Cambay
-Carme
-Gill Sans
-Gothic A1
-Gudea
-JejuGothic
-Mplus 1p
-OxygenProza Libre
-Roboto
-Scada
-Signika
-Ubuntu
-Work Sans
-Yantramanav
-
-Doppio One
-K2D
-Martel Sans
-Tauri
-*/
-
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
@@ -686,7 +662,7 @@ table.CodeRay td.code>pre{padding:0}
 <p>Register connections and emit signals from any C or C&#43;&#43; object of any type whatsoever.</p>
 </li>
 <li>
-<p>If two contexts share access to a C or C&#43;&#43; object, they can use that object as a randezvouz point, and communicate with each other through Synapse signals.</p>
+<p>If two contexts share access to a C or C&#43;&#43; object, they can use that object as a rendezvouz point, and communicate with each other through Synapse signals.</p>
 </li>
 <li>
 <p>A system of meta signals provides interoperability with other signal programming libraries and callback APIs.</p>
@@ -697,7 +673,7 @@ table.CodeRay td.code>pre{padding:0}
 </ul>
 </div>
 <div class="paragraph text-right">
-<p><a href="#tutorial">Tutorial</a> | <a href="#techniques">Programming techniques</a> | <a href="#synopsis">Synopsis</a> | <a href="#reference">Reference</a></p>
+<p><a href="https://github.com/zajo/boost-synapse">GitHub</a> | <a href="#tutorial">Tutorial</a> | <a href="#techniques">Programming techniques</a> | <a href="#synopsis">Synopsis</a> | <a href="#reference">Reference</a></p>
 </div>
 </div>
 </div>
@@ -1021,7 +997,7 @@ To further facilitate interoperability between Synapse and other callback APIs, 
 <p>Synapse can be used to implement interthread communication using signals. The data structures created by <a href="#connect"><code>connect</code></a> (or <a href="#translate"><code>translate</code></a>) use thread-local storage, so by default calling <a href="#emit"><code>emit</code></a> will call only functions connected by the calling thread (and will not return until all such functions have been called in order, or one of them throws.)</p>
 </div>
 <div class="paragraph">
-<p>The following diagram shows the connections created (by calls to <code><a href="#connect">connect</a>&lt;S&gt;</code>) in a single thread for a given signal type <code>S</code>, each connecting an emitter to a function. When <code><a href="#emit">emit</a>&lt;S&gt;(e1,arg,&#8230;&#8203;)</code> is called, all functions connecing the signal <code>S</code> from the given emitter <code>e1</code> are called in the order in which the connections were created:</p>
+<p>The following diagram shows the connections created (by calls to <code><a href="#connect">connect</a>&lt;S&gt;</code>) in a single thread for a given signal type <code>S</code>, each connecting an emitter to a function. When <code><a href="#emit">emit</a>&lt;S&gt;(e1,arg,&#8230;&#8203;)</code> is called, all functions connecting the signal <code>S</code> from the given emitter <code>e1</code> are called in the order in which the connections were created:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1767,7 +1743,7 @@ If either <code>e1</code> or <code>e2</code>, passed as raw pointers, expire bef
 </div>
 </div>
 <div class="paragraph">
-<p>Overloads of <a href="#connect"><code>connect</code></a> and <a href="#translate"><code>translate</code></a> return either <code>shared_ptr&lt;connection&gt;</code>  or <code>weak_ptr&lt;pconnection&gt;</code>, depending on whether or not the emitter and the receiver are passed as raw pointers. The former is used to control the lifetime of the connection explicitly, while the latter represents persisent connections, which expire implicitly with the expiration of the emitter or the receiver object.</p>
+<p>Overloads of <a href="#connect"><code>connect</code></a> and <a href="#translate"><code>translate</code></a> return either <code>shared_ptr&lt;connection&gt;</code>  or <code>weak_ptr&lt;pconnection&gt;</code>, depending on whether or not the emitter and the receiver are passed as raw pointers. The former is used to control the lifetime of the connection explicitly, while the latter represents persistent connections, which expire implicitly with the expiration of the emitter or the receiver object.</p>
 </div>
 <div class="paragraph">
 <p>Before being returned to the caller, <code>connection</code> objects are passed to handlers of the <a href="#meta::connected"><code>meta::connected</code></a> signal, which can use the <a href="#connection::emitter"><code>emitter</code></a>/<a href="#connection::receiver"><code>receiver</code></a> member function templates to access the emitter/receiver object passed to <a href="#connect"><code>connect</code></a>. The <a href="#connection::set_user_data"><code>set_user_data</code></a>/<a href="#connection::get_user_data"><code>get_user_data</code></a> member function templates can be used to store and access auxiliary information.</p>
@@ -1821,7 +1797,7 @@ T * get_user_data() <span class="directive">const</span>;</code></pre>
 <p>If <code>this</code> contains object of type <code>T</code> previously copied by a call to <a href="#connection::set_user_data"><code>set_user_data</code></a>, returns a pointer to that data.</p>
 </li>
 <li>
-<p>If <a href="#set_user_data"><code>set_user_data</code></a> has not been called for <code>this</code>, or if the type used to instantiate the <code>set_user_data</code> function template doesn&#8217;t match the type used with <code>get_user_data</code>, returns <code>0</code>.</p>
+<p>If <a href="#connection::set_user_data"><code>set_user_data</code></a> has not been called for <code>this</code>, or if the type used to instantiate the <code>set_user_data</code> function template doesn&#8217;t match the type used with <code>get_user_data</code>, returns <code>0</code>.</p>
 </li>
 </ul>
 </div>
@@ -1862,7 +1838,7 @@ shared_ptr&lt;T&gt; emitter() <span class="directive">const</span>;</code></pre>
 </div>
 </li>
 <li>
-<p>If the emitter was passed to <a href="#connect"><code>connect</code></a> (or <a href="#tranlate"><code>translate</code></a>) as a raw pointer, the returned <code>shared_ptr</code> points that emitter but does not (can not) keep it alive.</p>
+<p>If the emitter was passed to <a href="#connect"><code>connect</code></a> (or <a href="#translate"><code>translate</code></a>) as a raw pointer, the returned <code>shared_ptr</code> points that emitter but does not (can not) keep it alive.</p>
 </li>
 </ul>
 </div>
@@ -1906,7 +1882,7 @@ shared_ptr&lt;T&gt; receiver() <span class="directive">const</span>;</code></pre
 </div>
 </li>
 <li>
-<p>If the receiver was passed to <a href="#connect"><code>connect</code></a> (or <a href="#tranlate"><code>translate</code></a>) as a raw pointer, the returned <code>shared_ptr</code> points that receiver but does not (can not) keep it alive.</p>
+<p>If the receiver was passed to <a href="#connect"><code>connect</code></a> (or <a href="#translate"><code>translate</code></a>) as a raw pointer, the returned <code>shared_ptr</code> points that receiver but does not (can not) keep it alive.</p>
 </li>
 </ul>
 </div>
@@ -2382,7 +2358,7 @@ While <a href="#poll"><code>poll</code></a> (or <a href="#wait"><code>wait</code
 </div>
 </div>
 <div class="paragraph">
-<p>Once the above handler for the <code>meta::connected&lt;SSL_info_callback&gt;</code> signal is installed, we can simply use <a href="#connect"><code>connect</code></a> to install a C&#43;&#43; lamda handler for the <code>SSL_info_callback</code> signal we defined:</p>
+<p>Once the above handler for the <code>meta::connected&lt;SSL_info_callback&gt;</code> signal is installed, we can simply use <a href="#connect"><code>connect</code></a> to install a C&#43;&#43; lambda handler for the <code>SSL_info_callback</code> signal we defined:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
